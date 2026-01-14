@@ -12,7 +12,12 @@ RUN apt-get update \
     && unzip "ZenithProxy-launcher-linux-$ZENITH_ARCH_ID.zip" \
     && rm "ZenithProxy-launcher-linux-$ZENITH_ARCH_ID.zip"
 
+RUN mkdir -p /defaults
+
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 EXPOSE 25565
 WORKDIR /opt/ZenithProxy
 VOLUME /opt/ZenithProxy
-CMD ./launch --unattended
+ENTRYPOINT ["/entrypoint.sh"]
