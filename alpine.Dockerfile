@@ -10,13 +10,19 @@ ARG TARGETARCH
 ENV ZENITH_ARCH_ID=${TARGETARCH/arm64/aarch64}
 
 RUN apk add bash wget unzip \
-    && mkdir -p /opt/ZenithProxy \
-    && cd /opt/ZenithProxy \
+    && mkdir -p /usr/share/zenithproxy \
+    && cd /usr/share/zenithproxy \
     && wget "https://github.com/rfresh2/ZenithProxy/releases/download/launcher-v3/ZenithProxy-launcher-alpine-$ZENITH_ARCH_ID.zip" \
     && unzip "ZenithProxy-launcher-alpine-$ZENITH_ARCH_ID.zip" \
     && rm "ZenithProxy-launcher-alpine-$ZENITH_ARCH_ID.zip"
 
+
+RUN mkdir -p /defaults /opt/ZenithProxy
+
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 EXPOSE 25565
 WORKDIR /opt/ZenithProxy
 VOLUME /opt/ZenithProxy
-CMD ./launch --unattended
+ENTRYPOINT ["/entrypoint.sh"]
