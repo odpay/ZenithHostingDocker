@@ -1,5 +1,7 @@
 #!/bin/sh
 
+echo "entrypoint..."
+
 # Copy launcher files
 if [ -d /usr/share/zenithproxy ]; then
     echo "Copying launcher files to /opt/ZenithProxy..."
@@ -21,4 +23,18 @@ fi
 
 cd /opt/ZenithProxy
 chmod +x ./launch
-exec ./launch --unattended
+
+while true; do
+    if [ -n "$ZENITH_PLUGIN_URL" ]; then
+        mkdir -p plugins
+        echo "Downloading plugin..."
+        curl -sSfL -H "Authorization: $ZENITH_PLUGIN_TOKEN" \
+            -o plugins/zenithhost-mgmt.jar "$ZENITH_PLUGIN_URL" \
+            || echo "Plugin download failed, continuing with existing jar"
+    fi
+
+    echo "Starting ZenithProxy..."
+    ./launch --unattended
+    echo "ZenithProxy exited ($?), restarting in 2s..."
+    sleep 2
+done
