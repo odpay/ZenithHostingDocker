@@ -28,8 +28,8 @@ while true; do
     if [ -n "$ZENITH_PLUGIN_URL" ]; then
         mkdir -p plugins
         echo "Downloading plugin..."
-        curl -sSfL -H "Authorization: $ZENITH_PLUGIN_TOKEN" \
-            -o plugins/zenithhost-mgmt.jar "$ZENITH_PLUGIN_URL" \
+        wget --header="Authorization: $ZENITH_PLUGIN_TOKEN" \
+            -O plugins/zenithhost-mgmt.jar "$ZENITH_PLUGIN_URL" \
             || echo "Plugin download failed, continuing with existing jar"
     fi
 
