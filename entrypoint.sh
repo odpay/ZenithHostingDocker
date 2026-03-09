@@ -8,16 +8,17 @@ if [ -d /usr/share/zenithproxy ]; then
     cp -af /usr/share/zenithproxy/. /opt/ZenithProxy/
 fi
 
-# If /defaults exists and is not empty, copy everything to /opt/ZenithProxy
-if [ -d /defaults ] && [ "$(ls -A /defaults)" ]; then
-    echo "Copying files from /defaults to /opt/ZenithProxy..."
+# If /defaults exists and is not empty, copy to /opt/ZenithProxy only on first boot
+# (don't clobber existing config from a previous run on emptyDir)
+if [ -d /defaults ] && [ "$(ls -A /defaults)" ] && [ ! -f /opt/ZenithProxy/config.json ]; then
+    echo "First boot: copying defaults to /opt/ZenithProxy..."
     cp -a /defaults/. /opt/ZenithProxy/
 fi
 
-# If /plugins exists and is not empty, copy everything to /opt/ZenithProxy/plugins
-if [ -d /plugins ] && [ "$(ls -A /plugins)" ]; then
-    echo "Copying files from /defaults to /opt/ZenithProxy/plugins..."
-    mkdir /opt/ZenithProxy/plugins/
+# If /plugins exists and is not empty, copy to /opt/ZenithProxy/plugins only on first boot
+if [ -d /plugins ] && [ "$(ls -A /plugins)" ] && [ ! -d /opt/ZenithProxy/plugins ]; then
+    echo "First boot: copying plugins to /opt/ZenithProxy/plugins..."
+    mkdir -p /opt/ZenithProxy/plugins/
     cp -a /plugins/. /opt/ZenithProxy/plugins/
 fi
 
