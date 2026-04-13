@@ -29,9 +29,14 @@ while true; do
     if [ -n "$ZENITH_PLUGIN_URL" ]; then
         mkdir -p plugins
         echo "Downloading plugin..."
-        wget --header="Authorization: $ZENITH_PLUGIN_TOKEN" \
-            -O plugins/zenithhost-mgmt.jar "$ZENITH_PLUGIN_URL" \
-            || echo "Plugin download failed, continuing with existing jar"
+        if wget --header="Authorization: $ZENITH_PLUGIN_TOKEN" \
+            -O plugins/zenithhost-mgmt.jar.tmp "$ZENITH_PLUGIN_URL"; then
+            mv plugins/zenithhost-mgmt.jar.tmp plugins/zenithhost-mgmt.jar
+            echo "Plugin download successful"
+        else
+            rm -f plugins/zenithhost-mgmt.jar.tmp
+            echo "Plugin download failed, continuing with existing jar"
+        fi
     fi
 
     echo "Starting ZenithProxy..."
