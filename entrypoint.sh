@@ -13,6 +13,15 @@ fi
 if [ -d /defaults ] && [ "$(ls -A /defaults)" ] && [ ! -f /opt/ZenithProxy/config.json ]; then
     echo "First boot: copying defaults to /opt/ZenithProxy..."
     cp -a /defaults/. /opt/ZenithProxy/
+
+    # ConfigMap keys can't contain '/', so plugin configs arrive flattened as
+    # plugins_config_<name>.json. Put them back under plugins/config/.
+    for f in /opt/ZenithProxy/plugins_config_*.json; do
+        [ -e "$f" ] || continue
+        mkdir -p /opt/ZenithProxy/plugins/config
+        cp -L "$f" "/opt/ZenithProxy/plugins/config/${f##*/plugins_config_}"
+        rm -f "$f"
+    done
 fi
 
 # If /plugins exists and is not empty, copy to /opt/ZenithProxy/plugins only on first boot
